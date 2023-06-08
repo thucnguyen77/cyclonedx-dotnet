@@ -36,7 +36,8 @@ using System.Text.Json;
 namespace CycloneDX
 {
     [Command(Name = "dotnet cyclonedx", FullName = "A .NET Core global tool which creates CycloneDX Software Bill-of-Materials (SBOM) from .NET projects.")]
-    class Program {
+    class Program
+    {
         #region Options
         [Option(Description = "Output the tool version and exit", ShortName = "v", LongName = "version")]
         bool version { get; }
@@ -125,7 +126,7 @@ namespace CycloneDX
 
         [Option(Description = "Override the default BOM metadata component type (defaults to application).", ShortName = "st", LongName = "set-type")]
         public Component.Classification setType { get; }
-#endregion options
+        #endregion options
 
         internal static IFileSystem fileSystem = new FileSystem();
         internal static readonly IJsonDocs jsonDoc = new JsonDocs();
@@ -139,7 +140,8 @@ namespace CycloneDX
         public static async Task<int> Main(string[] args)
             => await CommandLineApplication.ExecuteAsync<Program>(args).ConfigureAwait(false);
 
-        async Task<int> OnExecuteAsync(CommandLineApplication app) {
+        async Task<int> OnExecuteAsync(CommandLineApplication app)
+        {
             if (version)
             {
                 Console.WriteLine(Assembly.GetExecutingAssembly().GetName().Version?.ToString());
@@ -196,10 +198,11 @@ namespace CycloneDX
             if (!(disableGithubLicenses || disableGithubLicensesDeprecated))
             {
                 // GitHubService requires its own HttpClient as it adds a default authorization header
-                HttpClient httpClient = new HttpClient(new HttpClientHandler {
+                HttpClient httpClient = new HttpClient(new HttpClientHandler
+                {
                     AllowAutoRedirect = false
                 });
-                
+
                 if (!string.IsNullOrEmpty(githubBearerToken))
                 {
                     githubService = new GithubService(httpClient, githubBearerToken);
@@ -446,7 +449,7 @@ namespace CycloneDX
             var bomFilename = outputFilename;
             if (string.IsNullOrEmpty(bomFilename))
             {
-                bomFilename = json ? "bom.json" : "bom.xml";
+                bomFilename = $"{topLevelComponent.Name}-SBOM.{(json ? "json" : "xml")}";
             }
             var bomFilePath = Program.fileSystem.Path.Combine(bomPath, bomFilename);
             Console.WriteLine("Writing to: " + bomFilePath);
